@@ -43,8 +43,15 @@ class RpcBridge
                 RpcRequested::dispatch($server, $requestId, $action, $payload);
             } catch (Throwable $failure) {
                 // The channel is the fast path, not the only one. Queue the
-                // request so the plugin still finds it on its next poll.
-                Log::warning('Could not publish an RPC request, queueing it', ['reason' => $failure->getMessage()]);
+                // request so the plugin still finds it on its next poll, and
+                // stop preferring a publish that just failed: every further
+                // attempt would pay the same timeout before falling back.
+                Log::warning('Could not publish an RPC request, falling back to the queue', [
+                    'server' => $server->uuid,
+                    'reason' => $failure->getMessage(),
+                ]);
+
+                $server->update(['uses_polling' => true]);
                 $this->enqueue($server, $requestId, $action, $payload);
             }
         }

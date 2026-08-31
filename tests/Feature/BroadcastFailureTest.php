@@ -84,6 +84,16 @@ class BroadcastFailureTest extends TestCase
         $this->assertCount(1, $bridge->collectPending($server));
     }
 
+    public function test_stops_preferring_a_channel_that_could_not_be_published_to(): void
+    {
+        config(['editor.rpc.timeout' => 0.2, 'editor.rpc.poll_interval_ms' => 20]);
+        $server = Server::factory()->onChannel()->create();
+
+        rescue(fn () => app(RpcBridge::class)->call($server, RpcAction::MenuList));
+
+        $this->assertTrue($server->refresh()->uses_polling);
+    }
+
     private function readySession(): EditorSession
     {
         return EditorSession::factory()
