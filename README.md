@@ -66,6 +66,15 @@ REVERB_SCHEME=https
 
 Start the server with `php artisan reverb:start` and give it a route from the public host. Behind Cloudflare, WebSockets must be enabled for the zone.
 
+Reverb needs **two** paths proxied to it, not one:
+
+| Path | Used by | Direction |
+|---|---|---|
+| `/app/{key}` | browser and plugin | the WebSocket itself |
+| `/apps/{id}/events` | this application | publishing an event |
+
+Routing only `/app` leaves the sockets working while every publish fails. Nothing breaks visibly, because a failed announcement is logged rather than raised, but the other open windows stop hearing about changes.
+
 ## Demo mode
 
 Opening the site without a session shows the editor running on the example menus the plugin ships. Everything renders and every editor works; only saving is unavailable, because there is no server behind it.

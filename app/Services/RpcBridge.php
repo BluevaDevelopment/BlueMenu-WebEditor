@@ -7,7 +7,9 @@ use App\Events\RpcRequested;
 use App\Exceptions\ServerOfflineException;
 use App\Models\Server;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Throwable;
 
 /**
  * Request/response bridge between a browser request and the plugin.
@@ -37,7 +39,14 @@ class RpcBridge
         if ($server->uses_polling) {
             $this->enqueue($server, $requestId, $action, $payload);
         } else {
-            RpcRequested::dispatch($server, $requestId, $action, $payload);
+            try {
+                RpcRequested::dispatch($server, $requestId, $action, $payload);
+            } catch (Throwable $failure) {
+                // The channel is the fast path, not the only one. Queue the
+                // request so the plugin still finds it on its next poll.
+                Log::warning('Could not publish an RPC request, queueing it', ['reason' => $failure->getMessage()]);
+                $this->enqueue($server, $requestId, $action, $payload);
+            }
         }
 
         return $this->awaitResponse($requestId);

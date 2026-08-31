@@ -20,8 +20,24 @@ export class ApiError extends Error {
     }
 }
 
-function csrfToken(): string {
-    return document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '';
+/**
+ * Validating a session regenerates it, which rotates the CSRF token and leaves
+ * the one rendered into the page stale. The cookie is rewritten on every
+ * response, so it is the only value that stays current.
+ */
+export function csrfHeaders(): Record<string, string> {
+    const cookie = document.cookie
+        .split('; ')
+        .find(entry => entry.startsWith('XSRF-TOKEN='))
+        ?.slice('XSRF-TOKEN='.length);
+
+    if (cookie !== undefined && cookie !== '') {
+        return { 'X-XSRF-TOKEN': decodeURIComponent(cookie) };
+    }
+
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content;
+
+    return meta === undefined ? {} : { 'X-CSRF-TOKEN': meta };
 }
 
 async function request<T>(method: string, url: string, body?: unknown): Promise<T> {
@@ -30,7 +46,7 @@ async function request<T>(method: string, url: string, body?: unknown): Promise<
         headers: {
             Accept: 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRF-TOKEN': csrfToken(),
+            ...csrfHeaders(),
             ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
         },
         body: body === undefined ? undefined : JSON.stringify(body),

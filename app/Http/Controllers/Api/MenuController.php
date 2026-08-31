@@ -9,7 +9,9 @@ use App\Models\EditorSession;
 use App\Services\RpcBridge;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Throwable;
 
 /**
  * Menu operations, each one forwarded to the plugin that owns the session.
@@ -64,9 +66,22 @@ class MenuController extends Controller
         return response()->json($rpc->call($session->server, $action, $payload));
     }
 
+    /**
+     * Lets the other windows know a menu changed.
+     *
+     * Broadcasting is a courtesy: the file is already written, so a broadcaster
+     * that is down or misrouted must not turn a successful save into a 500.
+     */
     private function announce(Request $request, string $platform, string $fileName, string $change): void
     {
-        MenuChanged::dispatch($this->session($request), $platform, $fileName, $change);
+        try {
+            MenuChanged::dispatch($this->session($request), $platform, $fileName, $change);
+        } catch (Throwable $failure) {
+            Log::warning('Could not announce a menu change', [
+                'fileName' => $fileName,
+                'reason' => $failure->getMessage(),
+            ]);
+        }
     }
 
     private function session(Request $request): EditorSession

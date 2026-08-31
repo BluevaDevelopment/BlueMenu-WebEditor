@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ApiError } from '../api/client';
+import { ApiError, csrfHeaders } from '../api/client';
 
 interface CommandResult {
     success: boolean;
@@ -30,7 +30,7 @@ export function AdminTerminal({ onClose }: { onClose: () => void }) {
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken(),
+                    ...csrfHeaders(),
                     'X-Admin-Token': token,
                 },
                 body: JSON.stringify({ command }),
@@ -123,10 +123,6 @@ function render(result: CommandResult): string[] {
     }
 
     return lines;
-}
-
-function csrfToken(): string {
-    return document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '';
 }
 
 function readToken(): string {

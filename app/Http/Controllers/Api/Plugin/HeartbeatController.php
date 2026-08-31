@@ -9,6 +9,8 @@ use App\Models\Server;
 use App\Services\RealtimeConfig;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 /**
  * Keeps the server marked as reachable and tells open windows when it comes back.
@@ -40,10 +42,18 @@ class HeartbeatController extends Controller
         ]);
     }
 
+    /**
+     * A heartbeat keeps the server marked reachable whether or not the open
+     * windows can be told about it, so a broken broadcaster is only logged.
+     */
     private function announceReturn(Server $server): void
     {
-        $server->editorSessions()
-            ->alive()
-            ->each(fn (EditorSession $session) => PluginStatusChanged::dispatch($session, true));
+        try {
+            $server->editorSessions()
+                ->alive()
+                ->each(fn (EditorSession $session) => PluginStatusChanged::dispatch($session, true));
+        } catch (Throwable $failure) {
+            Log::warning('Could not announce that a server came back', ['reason' => $failure->getMessage()]);
+        }
     }
 }
