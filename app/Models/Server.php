@@ -32,6 +32,11 @@ class Server extends Model implements Authenticatable
         'token_hash',
     ];
 
+    /** Until a plugin reports a live channel, its requests are queued. */
+    protected $attributes = [
+        'uses_polling' => true,
+    ];
+
     /**
      * A server is considered reachable while it has sent a heartbeat inside this window.
      */

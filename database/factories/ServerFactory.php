@@ -32,6 +32,12 @@ class ServerFactory extends Factory
         ];
     }
 
+    /** A server whose plugin holds a live channel, so requests are broadcast. */
+    public function onChannel(): static
+    {
+        return $this->state(['uses_polling' => false]);
+    }
+
     public function offline(): static
     {
         return $this->state(['last_seen_at' => now()->subHour()]);

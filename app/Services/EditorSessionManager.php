@@ -87,6 +87,33 @@ class EditorSessionManager
     }
 
     /**
+     * Adopts a window as the confirmed one when no confirmation was required.
+     *
+     * Such a session is created already confirmed but with no window attached,
+     * so without this the first window to validate is turned away as if another
+     * had got there first.
+     */
+    public function adoptWindow(EditorSession $session, string $verificationId): bool
+    {
+        if ($session->require_confirmation || $session->confirmed_verification_id !== null) {
+            return false;
+        }
+
+        return DB::transaction(function () use ($session, $verificationId): bool {
+            $locked = EditorSession::whereKey($session->getKey())->lockForUpdate()->first();
+
+            if ($locked === null || $locked->confirmed_verification_id !== null || $locked->require_confirmation) {
+                return false;
+            }
+
+            $locked->update(['confirmed_verification_id' => $verificationId]);
+            $session->setAttribute('confirmed_verification_id', $verificationId);
+
+            return true;
+        });
+    }
+
+    /**
      * Claims the session for the first browser window that validates it.
      */
     public function reserveForWeb(EditorSession $session): bool

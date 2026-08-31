@@ -37,6 +37,33 @@ class SessionValidationControllerTest extends TestCase
         $this->assertAuthenticatedAs($session, 'editor');
     }
 
+    public function test_opens_a_session_that_needed_no_confirmation(): void
+    {
+        // The plugin marks these confirmed on creation but attaches no window.
+        $session = EditorSession::factory()->create(['require_confirmation' => false, 'confirmed' => true]);
+        $verificationId = (string) Str::uuid();
+        $session->verifications()->create(['verification_id' => $verificationId]);
+
+        $this->getJson($this->url($session->session_id, $verificationId))
+            ->assertOk()
+            ->assertJson(['valid' => true, 'message' => 'Session validated']);
+    }
+
+    public function test_refuses_a_second_window_on_a_session_that_needed_no_confirmation(): void
+    {
+        $session = EditorSession::factory()->create(['require_confirmation' => false, 'confirmed' => true]);
+        $first = (string) Str::uuid();
+        $second = (string) Str::uuid();
+        $session->verifications()->create(['verification_id' => $first]);
+        $session->verifications()->create(['verification_id' => $second]);
+
+        $this->getJson($this->url($session->session_id, $first))->assertJson(['valid' => true]);
+
+        $this->getJson($this->url($session->session_id, $second))
+            ->assertOk()
+            ->assertJson(['valid' => false, 'message' => 'Session already validated from another window']);
+    }
+
     public function test_reserves_the_session_so_a_second_window_is_refused(): void
     {
         $verificationId = (string) Str::uuid();

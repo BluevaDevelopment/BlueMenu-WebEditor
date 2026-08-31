@@ -5,6 +5,7 @@ namespace Tests\Feature\Http\Controllers\Api;
 use App\Events\MenuChanged;
 use App\Events\RpcRequested;
 use App\Models\EditorSession;
+use App\Models\Server;
 use App\Services\RpcBridge;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
@@ -93,7 +94,9 @@ class MenuControllerTest extends TestCase
 
     private function editorSession(): EditorSession
     {
-        return EditorSession::factory()->create(['confirmed' => true, 'consumed' => true, 'active' => false]);
+        return EditorSession::factory()
+            ->for(Server::factory()->onChannel())
+            ->create(['confirmed' => true, 'consumed' => true, 'active' => false]);
     }
 
     /**

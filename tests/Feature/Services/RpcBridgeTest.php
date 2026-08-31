@@ -18,7 +18,7 @@ class RpcBridgeTest extends TestCase
     public function test_returns_the_payload_the_plugin_posts_back(): void
     {
         $bridge = app(RpcBridge::class);
-        $server = Server::factory()->create();
+        $server = Server::factory()->onChannel()->create();
 
         // The plugin answers on a separate request; a listener stands in for it.
         Event::listen(RpcRequested::class, fn (RpcRequested $event) => $bridge->resolve($event->requestId, [
@@ -36,7 +36,7 @@ class RpcBridgeTest extends TestCase
     public function test_broadcasts_the_request_on_the_private_channel_of_the_server(): void
     {
         $bridge = app(RpcBridge::class);
-        $server = Server::factory()->create();
+        $server = Server::factory()->onChannel()->create();
         $captured = null;
 
         Event::listen(RpcRequested::class, function (RpcRequested $event) use ($bridge, &$captured): void {

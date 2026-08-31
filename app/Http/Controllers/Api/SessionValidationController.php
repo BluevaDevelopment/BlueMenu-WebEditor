@@ -50,6 +50,10 @@ class SessionValidationController extends Controller
             );
         }
 
+        // A session that needed no confirmation has no window yet; the first
+        // one to arrive takes it.
+        $sessions->adoptWindow($session, $verificationId);
+
         if (! $session->matchesConfirmedVerification($verificationId)) {
             return $this->refuse(
                 $sessionId,
