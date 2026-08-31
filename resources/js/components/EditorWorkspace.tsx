@@ -6,6 +6,8 @@ import { activeTab, hasUnsavedWork, useEditorStore } from '../editor/store';
 import { validateMenuSource, type MenuDiagnostics } from '../editor/validator';
 import { AdminTerminal } from './AdminTerminal';
 import { MaintenanceBanner } from './MaintenanceBanner';
+import { NewMenuDialog } from './NewMenuDialog';
+import { DeleteMenuDialog } from './DeleteMenuDialog';
 
 // Echo and Pusher ride along with this component, so it is fetched only once
 // a session actually has live updates available.
@@ -30,6 +32,8 @@ export function EditorWorkspace({ sessionId, session, realtimeReady }: EditorWor
     const [visualMode, setVisualMode] = useState(true);
     const [terminalOpen, setTerminalOpen] = useState(false);
     const [loadError, setLoadError] = useState<string | null>(null);
+    const [creating, setCreating] = useState<string | null>(null);
+    const [deleting, setDeleting] = useState<MenuDescriptor | null>(null);
 
     const current = activeTab(store);
 
@@ -98,13 +102,20 @@ export function EditorWorkspace({ sessionId, session, realtimeReady }: EditorWor
         setBusy(true);
 
         try {
+            // The plugin refuses a broken menu, so the editor checks first and
+            // says what is wrong instead of letting the save fail on the server.
             const result = validateMenuSource(current.content, current.menu.platform);
-            setDiagnostics(result);
 
             if (!result.valid) {
-                notify('error', 'Fix the errors before saving');
+                setDiagnostics(result);
+                notify('error', `Cannot save: ${result.errors.length} errors. Check the Output panel.`);
 
                 return;
+            }
+
+            if (result.warnings.length > 0) {
+                setDiagnostics(result);
+                notify('warning', `Saving with ${result.warnings.length} warnings`);
             }
 
             await saveMenu(current.menu.platform, current.menu.fileName, current.content);
@@ -119,10 +130,6 @@ export function EditorWorkspace({ sessionId, session, realtimeReady }: EditorWor
 
     const remove = useCallback(
         async (menu: MenuDescriptor): Promise<void> => {
-            if (!window.confirm(`Delete ${menu.fileName}? The file is removed from the server.`)) {
-                return;
-            }
-
             try {
                 await deleteMenu(menu.platform, menu.fileName);
                 dispatch({ type: 'tab/closed', key: menuKey(menu) });
@@ -136,22 +143,37 @@ export function EditorWorkspace({ sessionId, session, realtimeReady }: EditorWor
     );
 
     const create = useCallback(
-        async (platform: string): Promise<void> => {
-            const fileName = window.prompt(`New ${platform.toLowerCase()} menu file name`, 'new_menu.yml');
+        async (platform: string, fileName: string, type: string, menuName: string): Promise<void> => {
+            const file = fileName.toLowerCase().endsWith('.yml') ? fileName : `${fileName}.yml`;
 
-            if (fileName === null || fileName.trim() === '') {
+            try {
+                await saveMenu(platform, file, starterMenu(platform, type, menuName));
+                notify('success', `${file} created`);
+                await loadMenus();
+            } catch (error) {
+                report(error, `Could not create ${file}`);
+            }
+        },
+        [loadMenus, notify, report],
+    );
+
+    const reloadTab = useCallback(
+        async (key: string): Promise<void> => {
+            const tab = store.tabs.find(open => open.key === key);
+
+            if (tab === undefined) {
                 return;
             }
 
             try {
-                await saveMenu(platform, fileName.trim(), starterMenu(platform, fileName.trim()));
-                notify('success', `${fileName.trim()} created`);
-                await loadMenus();
+                const loaded = await fetchMenu(tab.menu.platform, tab.menu.fileName);
+                dispatch({ type: 'tab/reloaded', key, content: loaded.content });
+                notify('info', `${tab.menu.fileName} reloaded from the server`);
             } catch (error) {
-                report(error, `Could not create ${fileName}`);
+                report(error, `Could not reload ${tab.menu.fileName}`);
             }
         },
-        [loadMenus, notify, report],
+        [dispatch, notify, report, store.tabs],
     );
 
     useSaveShortcut(save);
@@ -195,20 +217,48 @@ export function EditorWorkspace({ sessionId, session, realtimeReady }: EditorWor
                 busy={busy}
                 canSave
                 onToggleVisual={() => setVisualMode(mode => !mode)}
-                onValidate={() =>
-                current !== null && setDiagnostics(validateMenuSource(current.content, current.menu.platform))
-            }
+                onRefresh={() => void loadMenus()}
+                onToggleOutput={() =>
+                    setDiagnostics(
+                        current === null || diagnostics !== null
+                            ? null
+                            : validateMenuSource(current.content, current.menu.platform),
+                    )
+                }
                 onSave={() => void save()}
                 onOpen={menu => void openMenu(menu)}
-                onCreate={platform => void create(platform)}
-                onDelete={menu => void remove(menu)}
+                onCreate={platform => setCreating(platform)}
+                onDelete={menu => setDeleting(menu)}
                 statusLeft={`${store.menus.filter(menu => menu.platform !== 'CONFIG').length} menus loaded`}
                 statusRight={EDITOR_VERSION}
                 onCloseDiagnostics={() => setDiagnostics(null)}
+                onReloadTab={key => void reloadTab(key)}
                 notice={loadError}
                 onRetry={() => void loadMenus()}
                 footer={terminalOpen ? <AdminTerminal onClose={() => setTerminalOpen(false)} /> : null}
             />
+
+            {creating !== null && (
+                <NewMenuDialog
+                    platform={creating}
+                    onCreate={(fileName, type, menuName) => {
+                        void create(creating, fileName, type, menuName);
+                        setCreating(null);
+                    }}
+                    onClose={() => setCreating(null)}
+                />
+            )}
+
+            {deleting !== null && (
+                <DeleteMenuDialog
+                    menu={deleting}
+                    onConfirm={() => {
+                        void remove(deleting);
+                        setDeleting(null);
+                    }}
+                    onClose={() => setDeleting(null)}
+                />
+            )}
         </>
     );
 }
@@ -220,14 +270,16 @@ function sessionInfo(sessionId: string, serverVersion: string | null): string {
 }
 
 /** A new menu starts from the smallest file the plugin will actually load. */
-function starterMenu(platform: string, fileName: string): string {
-    const name = fileName.replace(/\.ya?ml$/i, '');
+function starterMenu(platform: string, type: string, menuName: string): string {
+    const name = menuName.replace(/'/g, "''");
 
     if (platform.toUpperCase() === 'BEDROCK') {
-        return ['file_version: 1', `menuName: '${name}'`, 'type: SIMPLE', 'content:', `  - '${name}'`, 'buttons: {}', ''].join('\n');
+        const body = ['file_version: 1', `menuName: '${name}'`, `type: ${type}`, 'content:', `  - '${name}'`];
+
+        return [...body, type === 'CUSTOM' ? 'components: {}' : 'buttons: {}', ''].join('\n');
     }
 
-    return ['file_version: 1', `menuName: '${name}'`, 'type: CHEST', 'menuSize: 27', 'items: {}', ''].join('\n');
+    return ['file_version: 1', `menuName: '${name}'`, `type: ${type}`, 'menuSize: 27', 'items: {}', ''].join('\n');
 }
 
 /** Ctrl+S and Cmd+S save, which is what anyone editing a file will reach for. */

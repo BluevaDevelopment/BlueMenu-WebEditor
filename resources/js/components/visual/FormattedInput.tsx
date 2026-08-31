@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react';
 import { parseMiniMessage } from '../../editor/miniMessage';
+import { GradientBuilder } from './GradientBuilder';
+import { HexColourPicker } from './HexColourPicker';
 
 interface FormattedInputProps {
     value: string;
@@ -53,6 +55,27 @@ const DECORATIONS: FormatTag[] = [
 export function FormattedInput({ value, onChange, multiline, rows = 3, placeholder, ariaLabel }: FormattedInputProps) {
     const field = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
     const [showColors, setShowColors] = useState(false);
+    const [dialog, setDialog] = useState<'hex' | 'gradient' | null>(null);
+
+    const insert = (text: string): void => {
+        const element = field.current;
+        const start = element?.selectionStart ?? value.length;
+        const end = element?.selectionEnd ?? value.length;
+
+        onChange(`${value.slice(0, start)}${text}${value.slice(end)}`);
+
+        queueMicrotask(() => {
+            const caret = start + text.length;
+            element?.focus();
+            element?.setSelectionRange(caret, caret);
+        });
+    };
+
+    const selectedText = (): string => {
+        const element = field.current;
+
+        return value.slice(element?.selectionStart ?? 0, element?.selectionEnd ?? 0);
+    };
 
     const apply = (tag: FormatTag): void => {
         const element = field.current;
@@ -72,6 +95,27 @@ export function FormattedInput({ value, onChange, multiline, rows = 3, placehold
 
     return (
         <div>
+            {dialog === 'hex' && (
+                <HexColourPicker
+                    onApply={tag => {
+                        insert(tag);
+                        setDialog(null);
+                    }}
+                    onClose={() => setDialog(null)}
+                />
+            )}
+
+            {dialog === 'gradient' && (
+                <GradientBuilder
+                    initialText={selectedText()}
+                    onApply={tagged => {
+                        insert(tagged);
+                        setDialog(null);
+                    }}
+                    onClose={() => setDialog(null)}
+                />
+            )}
+
             <div className="minimessage-toolbar">
                 <button
                     type="button"
@@ -79,6 +123,22 @@ export function FormattedInput({ value, onChange, multiline, rows = 3, placehold
                     className="btn btn-secondary btn-sm"
                 >
                     Colour
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setDialog('hex')}
+                    title="Pick any colour"
+                    className="btn btn-secondary btn-sm"
+                >
+                    #
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setDialog('gradient')}
+                    title="Build a gradient"
+                    className="btn btn-secondary btn-sm"
+                >
+                    ▤
                 </button>
                 {DECORATIONS.map(tag => (
                     <button

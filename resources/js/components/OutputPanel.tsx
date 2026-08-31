@@ -23,7 +23,10 @@ export function OutputPanel({ diagnostics, onClose }: OutputPanelProps) {
                     </span>
                 </div>
                 <div className="output-header-right">
-                    <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>
+                    <button type="button" className="btn btn-secondary btn-sm" onClick={onClose} title="Clear and close">
+                        🗑️
+                    </button>
+                    <button type="button" className="btn btn-secondary btn-sm" onClick={onClose} title="Close">
                         ✕
                     </button>
                 </div>

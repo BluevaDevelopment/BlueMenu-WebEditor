@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { isDirty, type OpenTab } from '../editor/store';
+import { ContextMenu } from './ContextMenu';
 
 interface EditorTabsProps {
     tabs: OpenTab[];
@@ -7,12 +8,26 @@ interface EditorTabsProps {
     actions?: ReactNode;
     onActivate: (key: string) => void;
     onClose: (key: string) => void;
+    onCloseOthers: (key: string) => void;
+    onCloseAll: () => void;
+    onReload: (key: string) => void;
     onReorder: (from: number, to: number) => void;
 }
 
-export function EditorTabs({ tabs, activeKey, actions, onActivate, onClose, onReorder }: EditorTabsProps) {
+export function EditorTabs({
+    tabs,
+    activeKey,
+    actions,
+    onActivate,
+    onClose,
+    onCloseOthers,
+    onCloseAll,
+    onReload,
+    onReorder,
+}: EditorTabsProps) {
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
     const [overIndex, setOverIndex] = useState<number | null>(null);
+    const [menu, setMenu] = useState<{ key: string; x: number; y: number } | null>(null);
 
     return (
         <div className="editor-tabs">
@@ -42,6 +57,10 @@ export function EditorTabs({ tabs, activeKey, actions, onActivate, onClose, onRe
                         }}
                         onClick={() => onActivate(tab.key)}
                         onKeyDown={event => event.key === 'Enter' && onActivate(tab.key)}
+                        onContextMenu={event => {
+                            event.preventDefault();
+                            setMenu({ key: tab.key, x: event.clientX, y: event.clientY });
+                        }}
                         className={[
                             'editor-tab',
                             tab.key === activeKey ? 'active' : '',
@@ -69,6 +88,21 @@ export function EditorTabs({ tabs, activeKey, actions, onActivate, onClose, onRe
             </div>
 
             {actions !== undefined && <div className="tabs-actions">{actions}</div>}
+
+            {menu !== null && (
+                <ContextMenu
+                    x={menu.x}
+                    y={menu.y}
+                    onDismiss={() => setMenu(null)}
+                    entries={[
+                        { label: 'Reload from server', onSelect: () => onReload(menu.key) },
+                        'divider',
+                        { label: 'Close', onSelect: () => onClose(menu.key) },
+                        { label: 'Close others', disabled: tabs.length < 2, onSelect: () => onCloseOthers(menu.key) },
+                        { label: 'Close all', onSelect: onCloseAll },
+                    ]}
+                />
+            )}
         </div>
     );
 }

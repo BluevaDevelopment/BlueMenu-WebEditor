@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { ContextMenu } from '../ContextMenu';
 
 export interface SlotMenuTarget {
     slot: number;
@@ -25,69 +25,22 @@ export function SlotContextMenu({
     onDelete,
     onDismiss,
 }: SlotContextMenuProps) {
-    const menu = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const dismiss = (event: MouseEvent): void => {
-            if (menu.current !== null && !menu.current.contains(event.target as Node)) {
-                onDismiss();
-            }
-        };
-
-        const escape = (event: KeyboardEvent): void => {
-            if (event.key === 'Escape') {
-                onDismiss();
-            }
-        };
-
-        document.addEventListener('mousedown', dismiss);
-        document.addEventListener('keydown', escape);
-
-        return () => {
-            document.removeEventListener('mousedown', dismiss);
-            document.removeEventListener('keydown', escape);
-        };
-    }, [onDismiss]);
-
     if (!hasItem && !canPaste) {
         return null;
     }
 
     return (
-        <div
-            ref={menu}
-            role="menu"
-            style={{ left: target.x, top: target.y }}
-            className="context-menu"
-        >
-            {hasItem && <Entry label="Copy" shortcut="Ctrl+C" onClick={onCopy} />}
-            {canPaste && <Entry label={hasItem ? 'Paste (replace)' : 'Paste'} shortcut="Ctrl+V" onClick={onPaste} />}
-            {hasItem && <div className="context-menu-divider" />}
-            {hasItem && <Entry label="Delete" shortcut="Del" onClick={onDelete} tone="danger" />}
-        </div>
-    );
-}
-
-function Entry({
-    label,
-    shortcut,
-    onClick,
-    tone = '',
-}: {
-    label: string;
-    shortcut: string;
-    onClick: () => void;
-    tone?: string;
-}) {
-    return (
-        <button
-            type="button"
-            role="menuitem"
-            onClick={onClick}
-            className={`context-menu-item ${tone}`}
-        >
-            {label}
-            <span className="shortcut">{shortcut}</span>
-        </button>
+        <ContextMenu
+            x={target.x}
+            y={target.y}
+            onDismiss={onDismiss}
+            entries={[
+                ...(hasItem ? [{ label: 'Copy', shortcut: 'Ctrl+C', onSelect: onCopy }] : []),
+                ...(canPaste
+                    ? [{ label: hasItem ? 'Paste (replace)' : 'Paste', shortcut: 'Ctrl+V', onSelect: onPaste }]
+                    : []),
+                ...(hasItem ? ['divider' as const, { label: 'Delete', shortcut: 'Del', danger: true, onSelect: onDelete }] : []),
+            ]}
+        />
     );
 }

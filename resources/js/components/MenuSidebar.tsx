@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { menuKey } from '../editor/menus';
+import { ContextMenu } from './ContextMenu';
 import type { MenuDescriptor } from '../types/editor';
 
 interface MenuSidebarProps {
@@ -26,6 +27,7 @@ const SECTIONS: Section[] = [
 
 export function MenuSidebar({ menus, activeKey, onOpen, onCreate, onDelete }: MenuSidebarProps) {
     const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+    const [menu, setMenu] = useState<{ menu: MenuDescriptor; x: number; y: number } | null>(null);
 
     return (
         <aside className="ide-sidebar">
@@ -67,6 +69,9 @@ export function MenuSidebar({ menus, activeKey, onOpen, onCreate, onDelete }: Me
                                         active={menuKey(menu) === activeKey}
                                         onOpen={onOpen}
                                         onDelete={section.createLabel === null ? null : onDelete}
+                                        onContextMenu={(target, position) =>
+                                            setMenu({ menu: target, ...position })
+                                        }
                                     />
                                 ))}
 
@@ -86,6 +91,24 @@ export function MenuSidebar({ menus, activeKey, onOpen, onCreate, onDelete }: Me
                     );
                 })}
             </div>
+
+            {menu !== null && (
+                <ContextMenu
+                    x={menu.x}
+                    y={menu.y}
+                    onDismiss={() => setMenu(null)}
+                    entries={[
+                        { label: 'Open', onSelect: () => onOpen(menu.menu) },
+                        'divider',
+                        {
+                            label: 'Delete',
+                            danger: true,
+                            disabled: onDelete === null || menu.menu.platform.toUpperCase() === 'CONFIG',
+                            onSelect: () => onDelete?.(menu.menu),
+                        },
+                    ]}
+                />
+            )}
         </aside>
     );
 }
@@ -96,12 +119,14 @@ function MenuRow({
     active,
     onOpen,
     onDelete,
+    onContextMenu,
 }: {
     menu: MenuDescriptor;
     icon: string;
     active: boolean;
     onOpen: (menu: MenuDescriptor) => void;
     onDelete: ((menu: MenuDescriptor) => void) | null;
+    onContextMenu: (menu: MenuDescriptor, position: { x: number; y: number }) => void;
 }) {
     return (
         <div
@@ -110,6 +135,10 @@ function MenuRow({
             tabIndex={0}
             onClick={() => onOpen(menu)}
             onKeyDown={event => event.key === 'Enter' && onOpen(menu)}
+            onContextMenu={event => {
+                event.preventDefault();
+                onContextMenu(menu, { x: event.clientX, y: event.clientY });
+            }}
         >
             <span className="menu-icon">{icon}</span>
 

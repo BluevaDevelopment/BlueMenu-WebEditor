@@ -25,7 +25,10 @@ export type EditorAction =
     | { type: 'tab/closed'; key: string }
     | { type: 'tab/moved'; from: number; to: number }
     | { type: 'tab/edited'; key: string; content: string }
-    | { type: 'tab/saved'; key: string };
+    | { type: 'tab/saved'; key: string }
+    | { type: 'tab/reloaded'; key: string; content: string }
+    | { type: 'tabs/closedOthers'; key: string }
+    | { type: 'tabs/closedAll' };
 
 export const initialStore: EditorStore = {
     menus: [],
@@ -117,6 +120,23 @@ export function editorReducer(store: EditorStore, action: EditorAction): EditorS
                 ...store,
                 tabs: store.tabs.map(tab => (tab.key === action.key ? { ...tab, content: action.content } : tab)),
             };
+        }
+
+        case 'tab/reloaded': {
+            return {
+                ...store,
+                tabs: store.tabs.map(tab =>
+                    tab.key === action.key ? { ...tab, content: action.content, originalContent: action.content } : tab,
+                ),
+            };
+        }
+
+        case 'tabs/closedOthers': {
+            return { ...store, tabs: store.tabs.filter(tab => tab.key === action.key), activeKey: action.key };
+        }
+
+        case 'tabs/closedAll': {
+            return { ...store, tabs: [], activeKey: null };
         }
 
         case 'tab/saved': {

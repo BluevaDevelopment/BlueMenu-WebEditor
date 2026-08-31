@@ -115,3 +115,32 @@ describe('reordering tabs', () => {
         expect(store.tabs.map(tab => tab.menu.fileName)).toEqual(['b.yml', 'c.yml', 'a.yml']);
     });
 });
+
+describe('closing several tabs', () => {
+    it('keeps only the one asked for', () => {
+        let store = withTabs('a.yml', 'b.yml', 'c.yml');
+        store = editorReducer(store, { type: 'tabs/closedOthers', key: 'java-b.yml' });
+
+        expect(store.tabs.map(tab => tab.key)).toEqual(['java-b.yml']);
+        expect(store.activeKey).toBe('java-b.yml');
+    });
+
+    it('closes everything', () => {
+        let store = withTabs('a.yml', 'b.yml');
+        store = editorReducer(store, { type: 'tabs/closedAll' });
+
+        expect(store.tabs).toEqual([]);
+        expect(store.activeKey).toBeNull();
+    });
+});
+
+describe('reloading a tab', () => {
+    it('replaces the text and clears the dirty flag', () => {
+        let store = withTabs('a.yml');
+        store = editorReducer(store, { type: 'tab/edited', key: 'java-a.yml', content: 'edited' });
+        store = editorReducer(store, { type: 'tab/reloaded', key: 'java-a.yml', content: 'from server' });
+
+        expect(store.tabs[0].content).toBe('from server');
+        expect(hasUnsavedWork(store)).toBe(false);
+    });
+});

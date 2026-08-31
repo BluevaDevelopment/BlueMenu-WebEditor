@@ -26,7 +26,8 @@ interface WorkspaceLayoutProps {
     busy: boolean;
     canSave: boolean;
     onToggleVisual: () => void;
-    onValidate: () => void;
+    onRefresh: () => void;
+    onToggleOutput: () => void;
     onSave: () => void;
     onOpen: (menu: MenuDescriptor) => void;
     onCreate: ((platform: string) => void) | null;
@@ -34,6 +35,7 @@ interface WorkspaceLayoutProps {
     statusLeft: string;
     statusRight: string;
     onCloseDiagnostics: () => void;
+    onReloadTab: (key: string) => void;
     /** Shown in place of the welcome screen when the menu list could not load. */
     notice?: string | null;
     onRetry?: () => void;
@@ -56,7 +58,8 @@ export function WorkspaceLayout({
     busy,
     canSave,
     onToggleVisual,
-    onValidate,
+    onRefresh,
+    onToggleOutput,
     onSave,
     onOpen,
     onCreate,
@@ -64,6 +67,7 @@ export function WorkspaceLayout({
     statusLeft,
     statusRight,
     onCloseDiagnostics,
+    onReloadTab,
     notice,
     onRetry,
     footer,
@@ -109,6 +113,9 @@ export function WorkspaceLayout({
                             activeKey={store.activeKey}
                             onActivate={key => dispatch({ type: 'tab/activated', key })}
                             onClose={key => dispatch({ type: 'tab/closed', key })}
+                            onCloseOthers={key => dispatch({ type: 'tabs/closedOthers', key })}
+                            onCloseAll={() => dispatch({ type: 'tabs/closedAll' })}
+                            onReload={onReloadTab}
                             onReorder={(from, to) => dispatch({ type: 'tab/moved', from, to })}
                             actions={
                                 <>
@@ -124,9 +131,8 @@ export function WorkspaceLayout({
                                     <button
                                         type="button"
                                         className="btn btn-secondary"
-                                        onClick={onValidate}
-                                        disabled={current === null}
-                                        title="Validate this menu"
+                                        onClick={onRefresh}
+                                        title="Reload menu list"
                                     >
                                         🔄
                                     </button>
@@ -189,7 +195,7 @@ export function WorkspaceLayout({
                             {footer}
                         </div>
 
-                        <StatusBar left={statusLeft} right={statusRight} onToggleOutput={onValidate} />
+                        <StatusBar left={statusLeft} right={statusRight} onToggleOutput={onToggleOutput} />
                     </section>
                 </main>
             </div>

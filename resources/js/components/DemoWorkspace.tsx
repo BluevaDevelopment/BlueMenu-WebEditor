@@ -55,8 +55,11 @@ export function DemoWorkspace() {
             busy={false}
             canSave={false}
             onToggleVisual={() => setVisualMode(mode => !mode)}
-            onValidate={() =>
-                current !== null && setDiagnostics(validateMenuSource(current.content, current.menu.platform))
+            onRefresh={() => notify('info', 'The demo always shows the sample menus.')}
+            onToggleOutput={() =>
+                setDiagnostics(current === null || diagnostics !== null
+                    ? null
+                    : validateMenuSource(current.content, current.menu.platform))
             }
             onSave={() => notify('info', 'The demo cannot save. Open the editor from your server to keep changes.')}
             onOpen={menu => void openMenu(menu)}
@@ -65,6 +68,7 @@ export function DemoWorkspace() {
             statusLeft={`${store.menus.filter(menu => menu.platform !== 'CONFIG').length} menus loaded`}
             statusRight={EDITOR_VERSION}
             onCloseDiagnostics={() => setDiagnostics(null)}
+            onReloadTab={() => notify('info', 'The demo always shows the sample menus.')}
         />
     );
 }
