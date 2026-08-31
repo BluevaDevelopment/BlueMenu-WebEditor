@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { normalizeMenuSize, VALID_CHEST_SIZES } from '../../editor/config';
-import { itemsAtTick, TICK_MS } from '../../editor/animation';
+import { canvasItems, slotAnimations, TICK_MS } from '../../editor/animation';
 import { applyVisualEdit, readVisual } from '../../editor/yamlDocument';
 import { ItemEditor } from './ItemEditor';
 import { ItemPalette } from './ItemPalette';
 import { MenuCanvas } from './MenuCanvas';
 import { SlotContextMenu, type SlotMenuTarget } from './SlotContextMenu';
+import { ResizeHandle } from '../ResizeHandle';
+import { usePanelWidth } from '../../editor/panelWidth';
 import { MenuSettings } from './MenuSettings';
 import { AnimationEditor } from './AnimationEditor';
 import { GlobalTimeline } from './GlobalTimeline';
@@ -30,7 +32,7 @@ export function VisualEditor({ source, platform, serverVersion, onChange }: Visu
     // Copied items live for the session, so one can be pasted across menus.
     const [clipboard, setClipboard] = useState<VisualItem | null>(null);
     const [panel, setPanel] = useState<PanelKey>('palette');
-    const playback = usePlayback();
+    const [panelWidth, setPanelWidth] = usePanelWidth('visual-panel', 350);
 
     const parsed = useMemo(() => {
         try {
@@ -39,6 +41,8 @@ export function VisualEditor({ source, platform, serverVersion, onChange }: Visu
             return { menu: null, error: error instanceof Error ? error.message : 'Could not read this menu' };
         }
     }, [source, platform]);
+
+    const playback = usePlayback(parsed.menu !== null && slotAnimations(parsed.menu).length > 0);
 
     if (parsed.menu === null) {
         return (
@@ -99,7 +103,7 @@ export function VisualEditor({ source, platform, serverVersion, onChange }: Visu
 
                     <MenuCanvas
                         size={normalizeMenuSize(menu.size)}
-                        items={playback.playing ? itemsAtTick(menu, playback.tick) : menu.items}
+                        items={canvasItems(menu, playback.tick, playback.playing)}
                         selectedSlot={selectedSlot}
                         serverVersion={serverVersion}
                         onSelect={slot => {
@@ -134,7 +138,9 @@ export function VisualEditor({ source, platform, serverVersion, onChange }: Visu
                     <GlobalTimeline menu={menu} serverVersion={serverVersion} playback={playback} />
                 </div>
 
-                <div className="visual-editor-right-panel">
+                <div className="visual-editor-right-panel" style={{ width: `${panelWidth}px` }}>
+                    <ResizeHandle edge="left" width={panelWidth} min={250} max={600} onResize={setPanelWidth} />
+
                     <div className="visual-editor-tabs">
                         {PANELS.map(tab => (
                             <button
@@ -236,9 +242,20 @@ export interface Playback {
  * Drives every animation of the menu off one tick counter, so two animations
  * with different intervals stay in step exactly as they do in game.
  */
-function usePlayback(): Playback {
+function usePlayback(hasAnimations: boolean): Playback {
     const [playing, setPlaying] = useState(false);
     const [tick, setTick] = useState(0);
+
+    // The menu animates on its own once it loads, the way it does in game.
+    useEffect(() => {
+        if (!hasAnimations) {
+            return;
+        }
+
+        const start = setTimeout(() => setPlaying(true), 500);
+
+        return () => clearTimeout(start);
+    }, [hasAnimations]);
 
     useEffect(() => {
         if (!playing) {

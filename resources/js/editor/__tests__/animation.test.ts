@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { frameAt, itemsAtTick, slotAnimations } from '../animation';
+import { canvasItems, frameAt, itemsAtTick, slotAnimations } from '../animation';
 import type { VisualJavaMenu } from '../model';
 
 function menuWith(animations: VisualJavaMenu['animations']): VisualJavaMenu {
@@ -104,5 +104,29 @@ describe('itemsAtTick', () => {
         itemsAtTick(menu, 2);
 
         expect(menu.items[13]).toBeUndefined();
+    });
+});
+
+describe('canvasItems', () => {
+    const menu = menuWith({
+        spin: {
+            interval: 2,
+            frames: {
+                one: { material: 'RED_WOOL', amount: 1, slot: 13 },
+                two: { material: 'BLUE_WOOL', amount: 1, slot: 13 },
+            },
+        },
+    });
+
+    it('shows the live frame while playing', () => {
+        expect(canvasItems(menu, 2, true)[13].material).toBe('BLUE_WOOL');
+    });
+
+    it('keeps the first frame when stopped, so the slot never looks empty', () => {
+        expect(canvasItems(menu, 2, false)[13].material).toBe('RED_WOOL');
+    });
+
+    it('still shows the static items when stopped', () => {
+        expect(canvasItems(menu, 0, false)[4].material).toBe('STONE');
     });
 });

@@ -41,8 +41,10 @@ export function frameAt(animation: SlotAnimation, tick: number): VisualItem {
 }
 
 /**
- * The menu's items with every animated slot replaced by its current frame, so
- * the canvas shows what the player would see while it plays.
+ * The menu's items with every animated slot showing its current frame.
+ *
+ * An animated slot usually has no entry in `items`, so it must keep showing a
+ * frame even when stopped, or the menu looks half empty the moment you pause.
  */
 export function itemsAtTick(menu: VisualJavaMenu, tick: number): Record<number, VisualItem> {
     const items = { ...menu.items };
@@ -52,4 +54,11 @@ export function itemsAtTick(menu: VisualJavaMenu, tick: number): Record<number, 
     }
 
     return items;
+}
+
+/**
+ * What the canvas shows: the live frame while playing, the first frame at rest.
+ */
+export function canvasItems(menu: VisualJavaMenu, tick: number, playing: boolean): Record<number, VisualItem> {
+    return itemsAtTick(menu, playing ? tick : 0);
 }

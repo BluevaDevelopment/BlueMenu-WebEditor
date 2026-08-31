@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { menuKey } from '../editor/menus';
 import { ContextMenu } from './ContextMenu';
+import { ResizeHandle } from './ResizeHandle';
+import { usePanelWidth } from '../editor/panelWidth';
 import type { MenuDescriptor } from '../types/editor';
 
 interface MenuSidebarProps {
@@ -28,9 +30,10 @@ const SECTIONS: Section[] = [
 export function MenuSidebar({ menus, activeKey, onOpen, onCreate, onDelete }: MenuSidebarProps) {
     const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
     const [menu, setMenu] = useState<{ menu: MenuDescriptor; x: number; y: number } | null>(null);
+    const [width, setWidth] = usePanelWidth('sidebar', 280);
 
     return (
-        <aside className="ide-sidebar">
+        <aside className="ide-sidebar" style={{ width: `${width}px` }}>
             <div className="sidebar-header">Server Menus</div>
 
             <div className="sidebar-content">
@@ -91,6 +94,8 @@ export function MenuSidebar({ menus, activeKey, onOpen, onCreate, onDelete }: Me
                     );
                 })}
             </div>
+
+            <ResizeHandle edge="right" width={width} min={200} max={500} onResize={setWidth} />
 
             {menu !== null && (
                 <ContextMenu
