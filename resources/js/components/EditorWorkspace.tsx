@@ -26,7 +26,8 @@ export function EditorWorkspace({ sessionId, session, realtimeReady }: EditorWor
     const notify = useToast();
     const [diagnostics, setDiagnostics] = useState<MenuDiagnostics | null>(null);
     const [busy, setBusy] = useState(false);
-    const [visualMode, setVisualMode] = useState(false);
+    // Menus open in the visual editor, as they did before the migration.
+    const [visualMode, setVisualMode] = useState(true);
     const [terminalOpen, setTerminalOpen] = useState(false);
     const [loadError, setLoadError] = useState<string | null>(null);
 

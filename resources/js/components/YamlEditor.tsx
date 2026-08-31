@@ -24,7 +24,7 @@ export function YamlEditor({ value, onChange }: YamlEditorProps) {
             onChange={onChange}
             indentWithTab={false}
             basicSetup={{ lineNumbers: true, foldGutter: true, autocompletion: false, highlightActiveLine: true }}
-            className="h-full text-sm"
+            className="yaml-editor"
         />
     );
 }

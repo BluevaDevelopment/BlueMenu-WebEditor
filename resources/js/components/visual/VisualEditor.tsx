@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { normalizeMenuSize, VALID_CHEST_SIZES } from '../../editor/config';
+import { itemsAtTick, TICK_MS } from '../../editor/animation';
 import { applyVisualEdit, readVisual } from '../../editor/yamlDocument';
 import { ItemEditor } from './ItemEditor';
 import { ItemPalette } from './ItemPalette';
@@ -29,6 +30,7 @@ export function VisualEditor({ source, platform, serverVersion, onChange }: Visu
     // Copied items live for the session, so one can be pasted across menus.
     const [clipboard, setClipboard] = useState<VisualItem | null>(null);
     const [panel, setPanel] = useState<PanelKey>('palette');
+    const playback = usePlayback();
 
     const parsed = useMemo(() => {
         try {
@@ -97,7 +99,7 @@ export function VisualEditor({ source, platform, serverVersion, onChange }: Visu
 
                     <MenuCanvas
                         size={normalizeMenuSize(menu.size)}
-                        items={menu.items}
+                        items={playback.playing ? itemsAtTick(menu, playback.tick) : menu.items}
                         selectedSlot={selectedSlot}
                         serverVersion={serverVersion}
                         onSelect={slot => {
@@ -127,9 +129,9 @@ export function VisualEditor({ source, platform, serverVersion, onChange }: Visu
                         }}
                     />
 
-                    <AnimationEditor menu={menu} serverVersion={serverVersion} onChange={commit} />
+                    <AnimationEditor menu={menu} serverVersion={serverVersion} onChange={commit} playback={playback} />
 
-                    <GlobalTimeline menu={menu} serverVersion={serverVersion} />
+                    <GlobalTimeline menu={menu} serverVersion={serverVersion} playback={playback} />
                 </div>
 
                 <div className="visual-editor-right-panel">
@@ -221,6 +223,41 @@ const PANELS: { key: PanelKey; label: string }[] = [
     { key: 'settings', label: 'Menu Settings' },
     { key: 'item', label: 'Item Editor' },
 ];
+
+export interface Playback {
+    playing: boolean;
+    tick: number;
+    play: () => void;
+    stop: () => void;
+    reset: () => void;
+}
+
+/**
+ * Drives every animation of the menu off one tick counter, so two animations
+ * with different intervals stay in step exactly as they do in game.
+ */
+function usePlayback(): Playback {
+    const [playing, setPlaying] = useState(false);
+    const [tick, setTick] = useState(0);
+
+    useEffect(() => {
+        if (!playing) {
+            return;
+        }
+
+        const timer = setInterval(() => setTick(current => current + 1), TICK_MS);
+
+        return () => clearInterval(timer);
+    }, [playing]);
+
+    return {
+        playing,
+        tick,
+        play: () => setPlaying(true),
+        stop: () => setPlaying(false),
+        reset: () => setTick(0),
+    };
+}
 
 interface SlotShortcuts {
     slot: number | null;

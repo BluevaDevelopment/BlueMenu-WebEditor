@@ -225,3 +225,22 @@
     gap: 4px;
     align-items: center;
 }
+
+/* The inherited rules size CodeMirror 5 (.CodeMirror); this editor is on
+   CodeMirror 6, whose root is .cm-editor. Without a flex basis it sizes to its
+   content and leaves the rest of a wide screen blank. */
+.yaml-editor,
+.editor-body > .cm-theme {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+}
+
+.yaml-editor .cm-editor {
+    height: 100%;
+}
+
+.yaml-editor .cm-scroller {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+}

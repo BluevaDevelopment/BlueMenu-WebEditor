@@ -1,41 +1,37 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ItemIcon } from './ItemIcon';
 import { MaterialSelector } from './MaterialSelector';
+import type { Playback } from './VisualEditor';
 import type { VisualAnimation, VisualItem, VisualJavaMenu } from '../../editor/model';
 
 interface AnimationEditorProps {
     menu: VisualJavaMenu;
     serverVersion: string | null;
     onChange: (menu: VisualJavaMenu) => void;
+    playback: Playback;
 }
 
-/** Ticks per frame, as the plugin counts them. A tick is 50ms. */
+/** Ticks per frame, as the plugin counts them. */
 const DEFAULT_INTERVAL = 2;
-const TICK_MS = 50;
 
 /**
  * The animation strip: one card per frame, played back at the configured rate
  * so the sequence can be judged without opening the game.
  */
-export function AnimationEditor({ menu, serverVersion, onChange }: AnimationEditorProps) {
+export function AnimationEditor({ menu, serverVersion, onChange, playback }: AnimationEditorProps) {
     const names = Object.keys(menu.animations);
     const [selected, setSelected] = useState<string | null>(names[0] ?? null);
-    const [playing, setPlaying] = useState(false);
-    const [frameIndex, setFrameIndex] = useState(0);
+    const [picked, setPicked] = useState(0);
 
     const active = selected === null ? undefined : menu.animations[selected];
     const frames = active === undefined ? [] : Object.entries(active.frames);
 
-    useEffect(() => {
-        if (!playing || active === undefined || frames.length < 2) {
-            return;
-        }
-
-        const period = Math.max(1, active.interval) * TICK_MS;
-        const timer = setInterval(() => setFrameIndex(current => (current + 1) % frames.length), period);
-
-        return () => clearInterval(timer);
-    }, [playing, active, frames.length]);
+    // While it plays, the strip follows the shared clock; otherwise it shows
+    // whichever frame is being edited.
+    const frameIndex =
+        playback.playing && frames.length > 0
+            ? Math.floor(playback.tick / Math.max(1, active?.interval ?? DEFAULT_INTERVAL)) % frames.length
+            : Math.min(picked, Math.max(0, frames.length - 1));
 
     if (names.length === 0) {
         return (
@@ -73,7 +69,7 @@ export function AnimationEditor({ menu, serverVersion, onChange }: AnimationEdit
                         value={selected ?? ''}
                         onChange={event => {
                             setSelected(event.target.value);
-                            setFrameIndex(0);
+                            setPicked(0);
                         }}
                         aria-label="Animation"
                     >
@@ -84,10 +80,10 @@ export function AnimationEditor({ menu, serverVersion, onChange }: AnimationEdit
                         ))}
                     </select>
 
-                    <button type="button" className="btn btn-secondary btn-sm" onClick={() => setPlaying(true)} title="Play">
+                    <button type="button" className="btn btn-secondary btn-sm" onClick={playback.play} title="Play">
                         ▶️
                     </button>
-                    <button type="button" className="btn btn-secondary btn-sm" onClick={() => setPlaying(false)} title="Stop">
+                    <button type="button" className="btn btn-secondary btn-sm" onClick={playback.stop} title="Stop">
                         ⏹️
                     </button>
                     <button
@@ -131,12 +127,12 @@ export function AnimationEditor({ menu, serverVersion, onChange }: AnimationEdit
                 {frames.map(([key, frame], index) => (
                     <div
                         key={key}
-                        className={`timeline-frame${playing && index === frameIndex ? ' active' : ''}`}
+                        className={`timeline-frame${index === frameIndex ? ' active' : ''}`}
                         title={`Frame ${index + 1}: ${frame.material}`}
                         role="button"
                         tabIndex={0}
-                        onClick={() => setFrameIndex(index)}
-                        onKeyDown={event => event.key === 'Enter' && setFrameIndex(index)}
+                        onClick={() => setPicked(index)}
+                        onKeyDown={event => event.key === 'Enter' && setPicked(index)}
                     >
                         <div className="timeline-frame-number">{index + 1}</div>
                         <div className="timeline-frame-preview">
@@ -157,7 +153,7 @@ export function AnimationEditor({ menu, serverVersion, onChange }: AnimationEdit
                         const next = { ...active.frames };
                         delete next[frames[frameIndex][0]];
                         update({ ...active, frames: next });
-                        setFrameIndex(0);
+                        setPicked(0);
                     }}
                 />
             )}
