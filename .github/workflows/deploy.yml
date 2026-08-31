@@ -13,7 +13,7 @@ jobs:
       group: check-${{ github.ref }}
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install dependencies
         run: |
@@ -49,7 +49,11 @@ jobs:
         run: |
           set -e
           cd /srv/apps/blueva-menu
-          git pull --ff-only
+          # Mirror the remote rather than merge into it: a deploy checkout has
+          # nothing worth keeping, and a rewritten history makes a fast-forward
+          # impossible. Ignored files (.env, vendor, public/build) are untouched.
+          git fetch origin main
+          git reset --hard origin/main
           composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
           npm ci
           npm run build
