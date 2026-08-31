@@ -1,0 +1,227 @@
+/* Pieces the React editor adds, in the language of editor.css */
+
+.app-shell {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.app-shell .ide-container {
+    flex: 1;
+    min-height: 0;
+    height: auto;
+}
+
+.menu-section {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.demo-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 8px 20px;
+    background: linear-gradient(90deg, #0a4b73 0%, #063049 100%);
+    color: #dff1ff;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.demo-banner-title {
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 11px;
+    background: rgba(255, 255, 255, 0.12);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.terminal-panel {
+    height: 240px;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-primary);
+    border-top: 1px solid var(--border-color);
+}
+
+.terminal-output {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 12px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.terminal-output p {
+    white-space: pre-wrap;
+}
+
+.terminal-form {
+    display: flex;
+    gap: 8px;
+    padding: 8px 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+.terminal-form input {
+    flex: 1;
+}
+
+/* Inputs the original sheet only styled inside modals. */
+.editor-field select,
+.editor-field textarea,
+.editor-field input,
+.inline-input {
+    width: 100%;
+    padding: 8px 12px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-family: inherit;
+}
+
+.editor-field select:focus,
+.editor-field textarea:focus,
+.editor-field input:focus,
+.inline-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.editor-field .field-hint {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.editor-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.editor-row .inline-input {
+    min-width: 0;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+}
+
+.empty-note {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.entry-card {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--bg-tertiary);
+    padding: 10px;
+    margin-bottom: 8px;
+}
+
+.entry-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.swatch-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 6px;
+}
+
+.swatch {
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+}
+
+.format-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 6px;
+}
+
+.preview-line {
+    display: block;
+    font-family: 'Mojang', 'Consolas', monospace;
+    font-size: 13px;
+    margin-top: 4px;
+    white-space: pre-wrap;
+}
+
+.badge-sync {
+    color: #54c8ff;
+}
+
+.badge-warn {
+    color: var(--warning-color);
+}
+
+/* MiniMessage is rendered one span per character so a gradient can colour each
+   letter. A span holding only a space collapses to nothing between its
+   neighbours, which glues the words together, so every container that shows
+   rendered text keeps its whitespace. */
+.bedrock-form-title,
+.bedrock-content-line,
+.bedrock-button-text,
+.bedrock-component-label,
+.menu-title-preview,
+.item-preview-name,
+.item-preview-lore-line,
+.item-tooltip-name,
+.item-tooltip-lore-line,
+.preview-line {
+    white-space: pre-wrap;
+}
+
+/* The canvas header gained a size selector, so it lays its two parts out
+   instead of letting the control overlap the label. */
+.canvas-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+/* A checkbox and its label need a gap the generic row does not give them. */
+.setting-group .editor-row input[type='checkbox'] {
+    width: auto;
+    margin-right: 8px;
+}
+
+/* The original laid its format buttons out with inline styles inside the
+   toolbar; the class itself only carries a margin, so the row lives here. */
+.minimessage-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+}

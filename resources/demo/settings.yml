@@ -1,0 +1,119 @@
+#  ____  _            __  __
+# | __ )| |_   _  ___|  \/  | ___ _ __  _   _
+# |  _ \| | | | |/ _ | |\/| |/ _ | '_ \| | | |
+# | |_) | | |_| |  __| |  | |  __| | | | |_| |
+# |____/|_|\__,_|\___|_|  |_|\___|_| |_|\__,_|
+
+file_version: 2
+
+# Metrics:
+# This plugin uses the bStats metrics system. If you want your data not to be collected, you can disable this system here.
+# The following information is collected and sent to bstats.org:
+#      Whether the server is in offline or online mode
+#      The plugin version
+#      The server version
+#      The java version
+#      The OS version/name and architecture
+#      The location of your server
+#      The core count for the CPU
+#      The number of players online
+#      The Metrics version
+metrics: true
+
+# Web Editor:
+# Enable the web-based menu editor for real-time menu editing from a browser
+# Connects to the official BlueMenu Web Editor at https://menu.blueva.net
+webeditor:
+  # Enable/disable web editor functionality
+  # When enabled, connects automatically to the official BlueMenu server
+  enabled: true
+
+  # Require players to confirm sessions in-game before using the web editor
+  require-confirmation: true
+
+  # Auto-save changes made in the web editor
+  auto-save: true
+
+  # Auto-reload menus when changes are saved
+  auto-reload: true
+
+  # Environment for the official web editor server.
+  # Options:
+  #   PRODUCTION  - Default. Connects to https://menu.blueva.net and wss://menu.blueva.net/ws
+  #   DEVELOPMENT - Only for BlueMenu contributors. Uses https://menu.blueva.net/dev and wss://menu.blueva.net/dev/ws.
+  #                 NOT recommended for public servers; this endpoint may be unstable.
+  environment: PRODUCTION
+
+# Menus located in /plugins/BlueMenu/menus/java
+# Directory path where Java menus are located.
+java_menus:
+  - 'menu;chest_example.yml'  # Standard CHEST menu example with animations and items.
+  # Note: Demonstrates basic menu structure, player heads, actions, and animated borders.
+
+  - 'slots;slots_helper.yml'  # Utility menu showing all slot numbers (0-53).
+  # Note: Helpful reference for designing menus and finding slot positions.
+
+  - 'conditions_example;conditions_example.yml'  # Conditional CHEST menu example.
+  # Note: Demonstrates display_conditions with all/any/none logic for items.
+
+# Menus located in /plugins/BlueMenu/menus/bedrock
+# Directory path where Bedrock menus are located.
+bedrock_menus:
+  - 'menu;modal_example.yml'  # MODAL form example (2 buttons only).
+  # Note: Shows a simple dialog with exactly 2 buttons as per FloodgateAPI specs.
+
+  - 'bedrock_menu;simple_example.yml'  # SIMPLE form example with multiple buttons.
+  # Note: Demonstrates button list with text, images, and actions.
+
+  - 'customform;custom_example.yml'  # CUSTOM form example with all component types.
+  # Note: Comprehensive example showing INPUT, DROPDOWN, TOGGLE, SLIDER, STEPSLIDER, LABEL.
+
+  - 'simple_conditions;conditions_simple_example.yml'  # SIMPLE form with conditional buttons.
+  # Note: Demonstrates display_conditions for buttons with all/any/none logic.
+
+  - 'custom_conditions;conditions_custom_example.yml'  # CUSTOM form with conditional components.
+  # Note: Demonstrates display_conditions for form components with all/any/none logic.
+
+# Multi-server sync:
+# Configure which menu files should be synchronized across your network.
+# This list is read by the core plugin and used to decide which menus to sync.
+sync-menus:
+  # Enable/disable menu synchronization
+  enabled: false
+
+  # How often receiver menus check for updates from MySQL
+  poll-interval-seconds: 3
+
+  # Menus that this server publishes to MySQL.
+  # Entries MUST match entries present in java_menus/bedrock_menus (same 'menuKey;file.yml').
+  # Special: Use a single entry ["*"] to send ALL menus registered in java_menus/bedrock_menus.
+  send:
+    java: []
+    bedrock: []
+
+  # Menus that this server consumes from MySQL.
+  # List specific entries matching java_menus/bedrock_menus format (e.g., 'menuKey;file.yml').
+  # Special: Use a single entry ["*"] to receive ALL menus from the database.
+  #   - Wildcard mode automatically fetches all menus from MySQL, even if not in java_menus/bedrock_menus.
+  #   - This allows a central server to create/update menus and have them sync to all other servers.
+  #   - Menus are loaded directly from database, no local registration needed.
+  receive:
+    java: []
+    bedrock: []
+
+  # If a send menu conflicts with a newer DB version, choose behavior:
+  # SKIP = do not overwrite newer DB version (default, safest)
+  # OVERWRITE = this server overwrites DB on reload/start
+  send-conflict-policy: SKIP
+
+  # MySQL/MariaDB connection settings for menu synchronization.
+  mysql:
+    host: "localhost"
+    port: 3306
+    database: "bluemenu"
+    username: "root"
+    password: "password"
+    use-ssl: false
+    pool-size: 10
+    connection-timeout-ms: 10000
+    max-lifetime-ms: 1800000

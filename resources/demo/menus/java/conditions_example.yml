@@ -1,0 +1,234 @@
+#  ____  _            __  __
+# | __ )| |_   _  ___|  \/  | ___ _ __  _   _
+# |  _ \| | | | |/ _ | |\/| |/ _ | '_ \| | | |
+# | |_) | | |_| |  __| |  | |  __| | | | |_| |
+# |____/|_|\__,_|\___|_|  |_|\___|_| |_|\__,_|
+
+file_version: 1
+
+# ====================================
+# CONDITIONAL CHEST MENU EXAMPLE (Java Edition)
+# ====================================
+# This example demonstrates display_conditions, open_conditions, open_actions,
+# and item priority in CHEST menus.
+# Items are shown or hidden based on conditions using placeholders.
+#
+# Available condition syntaxes:
+# 1. Simple list: All conditions in the list must be true (AND logic)
+# 2. Boolean operators: Use && (AND), || (OR), ! (NOT) in expressions
+# 3. all/any/none: Advanced logic grouping
+#    - all: All conditions must be true
+#    - any: At least one condition must be true
+#    - none: None of the conditions must be true
+#
+# Supported comparison operators:
+# - Numeric: >=, <=, >, <, ==, !=
+# - String: startsWith, endsWith, contains, equals
+# - Math: +, -, *, /, %
+
+menuName: "&b&lConditional Menu"
+menuSize: 54               # Menu size (must be multiple of 9, max 54)
+type: CHEST                # Menu type: CHEST displays a standard inventory GUI
+openCommand: /conditionalmenu
+
+# Menu only opens if the player has reached at least level 5
+open_conditions:
+  - "{player_level} >= 5"
+
+# Actions fired immediately when the menu opens
+open_actions:
+  - "MESSAGE;&aConditional Menu opened!"
+
+# Item definitions with various condition examples
+items:
+  # EXAMPLE 1: Simple single condition + priority
+  # This item only appears if the player's level is 10 or higher.
+  # Priority 1 means it wins over the fallback item below when its condition passes.
+  level_item:
+    name: "&6Level 10+ Item"
+    slot: 10
+    priority: 1             # Higher priority — takes the slot when conditions pass
+    itemStack:
+      material: DIAMOND
+      amount: 1
+    lore:
+      - "&7Only visible if level >= 10"
+      - "&7Your level: {player_level}"
+    display_conditions:
+      - "{player_level} >= 10"  # Single condition check
+    actions:
+      - "[BOTH] MESSAGE;&aYou have level 10 or higher!"
+
+  # EXAMPLE 1b: Priority fallback
+  # This item occupies the same slot as level_item but has lower priority.
+  # It is shown only when level_item's display_conditions fail (i.e. level < 10).
+  level_item_fallback:
+    name: "&7Not Yet..."
+    slot: 10
+    priority: 0             # Lower priority — shown when level_item's conditions fail
+    itemStack:
+      material: STONE_SWORD
+      amount: 1
+    lore:
+      - "&7Reach level 10 to unlock the diamond item"
+      - "&7Your level: {player_level}"
+    actions:
+      - "[BOTH] MESSAGE;&7You need level 10 or higher!"
+
+  # EXAMPLE 2: Another simple condition
+  # This item only appears if the player has more than 10 health
+  healthy_item:
+    name: "&cHealthy Player"
+    slot: 11
+    itemStack:
+      material: GOLDEN_APPLE
+      amount: 1
+    lore:
+      - "&7Only visible if health > 10"
+      - "&7Your health: {player_health}"
+    display_conditions:
+      - "{player_health} > 10"  # Health check
+    actions:
+      - "[BOTH] MESSAGE;&aYou're healthy!"
+
+  # EXAMPLE 3: Multiple conditions (AND logic)
+  # All conditions in the list must be true for the item to appear
+  advanced_item:
+    name: "&eAdvanced Item"
+    slot: 12
+    itemStack:
+      material: EMERALD
+      amount: 1
+    lore:
+      - "&7Requires level >= 5 AND health >= 8"
+      - "&7Level: {player_level}"
+      - "&7Health: {player_health}"
+    display_conditions:
+      - "{player_level} >= 5"    # Condition 1
+      - "{player_health} >= 8"   # Condition 2
+    actions:
+      - "[BOTH] MESSAGE;&aYou meet both requirements!"
+
+  # EXAMPLE 4: Boolean operators
+  # Using && (AND), || (OR), ! (NOT) in a single expression
+  boolean_item:
+    name: "&dBoolean Example"
+    slot: 13
+    itemStack:
+      material: NETHER_STAR
+      amount: 1
+    lore:
+      - "&7Shown if (level >= 10) AND (health > 5)"
+    display_conditions:
+      - "({player_level} >= 10) && ({player_health} > 5)"  # Combined with AND
+    actions:
+      - "[BOTH] MESSAGE;&dYou passed the boolean check!"
+
+  # EXAMPLE 5: Negation operator
+  # Using ! (NOT) to invert a condition
+  low_level_item:
+    name: "&7Low Level Item"
+    slot: 14
+    itemStack:
+      material: WOODEN_SWORD
+      amount: 1
+    lore:
+      - "&7Only shown when level is NOT 50"
+    display_conditions:
+      - "! ({player_level} == 50)"  # NOT operator
+    actions:
+      - "[BOTH] MESSAGE;&7You're not level 50!"
+
+  # EXAMPLE 6: Math operators in conditions
+  # You can use math operations: +, -, *, /, %
+  math_item:
+    name: "&aMath Example"
+    slot: 15
+    itemStack:
+      material: REDSTONE
+      amount: 1
+    lore:
+      - "&7Shown if level * 2 >= 20"
+      - "&7Your level: {player_level}"
+    display_conditions:
+      - "{player_level} * 2 >= 20"  # Math operation
+    actions:
+      - "[BOTH] MESSAGE;&aMath condition passed!"
+
+  # EXAMPLE 7: String comparison
+  # Supports: startsWith, endsWith, contains, equals
+  name_item:
+    name: "&bName Check"
+    slot: 16
+    itemStack:
+      material: NAME_TAG
+      amount: 1
+    lore:
+      - "&7Shown if name starts with 'A'"
+    display_conditions:
+      - "{player_name} startsWith 'A'"  # String comparison
+    actions:
+      - "[BOTH] MESSAGE;&bYour name starts with A!"
+
+  # EXAMPLE 8: Advanced all/any/none logic
+  # Demonstrates complex conditional logic with multiple groups
+  complex_item:
+    name: "&5Complex Conditions"
+    slot: 20
+    itemStack:
+      material: ENCHANTED_BOOK
+      amount: 1
+    lore:
+      - "&7Uses all/any/none logic"
+      - "&7All: level >= 5 AND health >= 8"
+      - "&7Any: high level OR high health"
+      - "&7None: not level 99"
+    display_conditions:
+      all:     # All of these must be true
+        - "{player_level} >= 5"
+        - "{player_health} >= 8"
+      any:     # At least one of these must be true
+        - "{player_level} >= 20"
+        - "{player_health} >= 15"
+      none:    # None of these must be true
+        - "{player_level} == 99"
+    actions:
+      - "[BOTH] MESSAGE;&5Complex conditions passed!"
+
+  # EXAMPLE 9: Another all/any/none example with string conditions
+  vip_item:
+    name: "&6VIP Access"
+    slot: 21
+    itemStack:
+      material: GOLD_BLOCK
+      amount: 1
+    lore:
+      - "&7All: level 10+ AND health > 5"
+      - "&7Any: name starts with A/B/C"
+      - "&7None: not level 1"
+    display_conditions:
+      all:
+        - "{player_level} >= 10"
+        - "{player_health} > 5"
+      any:
+        - "{player_name} startsWith 'A'"
+        - "{player_name} startsWith 'B'"
+        - "{player_name} startsWith 'C'"
+      none:
+        - "{player_level} == 1"
+    actions:
+      - "[BOTH] MESSAGE;&6VIP access granted!"
+
+  # EXAMPLE 10: Item without conditions
+  # This item is always visible to all players
+  always_visible:
+    name: "&fAlways Visible"
+    slot: 40
+    itemStack:
+      material: BARRIER
+      amount: 1
+    lore:
+      - "&7This item has no conditions"
+      - "&7So it's always visible"
+    actions:
+      - "[BOTH] CLOSE"

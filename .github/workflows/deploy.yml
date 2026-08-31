@@ -1,0 +1,58 @@
+name: CI and deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: [self-hosted, linux, x64]
+    concurrency:
+      group: check-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          set -e
+          cp .env.example .env
+          composer install --no-interaction --prefer-dist
+          php artisan key:generate
+          npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      - name: Frontend tests
+        run: npm test
+        env:
+          LARAVEL_BYPASS_ENV_CHECK: 1
+
+      - name: Tests
+        run: php artisan test --compact
+
+  deploy:
+    needs: check
+    if: github.event_name != 'pull_request'
+    runs-on: [self-hosted, linux, x64]
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
+    steps:
+      - name: Pull and deploy
+        run: |
+          set -e
+          cd /srv/apps/blueva-menu
+          git pull --ff-only
+          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+          npm ci
+          npm run build
+          php artisan migrate --force
+          php artisan optimize:clear
+          php artisan optimize

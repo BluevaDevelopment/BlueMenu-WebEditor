@@ -1,0 +1,909 @@
+#  ____  _            __  __
+# | __ )| |_   _  ___|  \/  | ___ _ __  _   _
+# |  _ \| | | | |/ _ | |\/| |/ _ | '_ \| | | |
+# | |_) | | |_| |  __| |  | |  __| | | | |_| |
+# |____/|_|\__,_|\___|_|  |_|\___|_| |_|\__,_|
+
+
+file_version: 1
+
+# ====================================
+# CHEST MENU EXAMPLE (Java Edition)
+# ====================================
+# This is a complete example of a CHEST menu for Java players.
+# It demonstrates:
+# - Basic menu structure with items
+# - Player head items with custom textures (base64 values)
+# - Click actions (LEFT_CLICK, RIGHT_CLICK, SHIFT_LEFT_CLICK, SHIFT_RIGHT_CLICK, MIDDLE_CLICK, BOTH, BOTH_SHIFT, ALL)
+# - Animated items using frames
+# - Using gradients and colors in names/lore
+# - open_actions fired when the menu is opened
+#
+# Menu size options: 9, 18, 27, 36, 45, 54 (multiples of 9)
+
+menuName: '      <bold><gradient:#55FFFF:#5555FF>BlueMenu</gradient></bold> <gray>- <reset>Example'
+menuSize: 54           # 6 rows (54 slots)
+type: CHEST            # Standard inventory menu type
+openCommand: /menu     # Command to open this menu
+
+# Actions fired immediately when the menu opens
+open_actions:
+  - "MESSAGE;&b&lBlueMenu &r&7— Thanks for checking out the example menu!"
+
+# Static menu items
+items:
+  # Central logo item with custom player head texture
+  item1:
+    name: "<bold><gradient:#55FFFF:#5555FF>BlueMenu</gradient></bold>"
+    slot: 22  # Center slot in the menu
+    itemStack:
+      material: PLAYER_HEAD
+      amount: 1
+      value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTc4NDRhNDU1NGY5MzYzZDY1OTkwNmQ2MzEyODE4YTExMjJhMWY5YTkyYTIzMjYyYjFlNjc3MDIyMzJiYjcifX19  # Base64 texture value
+    lore:
+    - '<aqua>with <red>❤ <aqua>by Blueva'
+
+  # Download button
+  item2:
+    name: '<aqua>Download'
+    slot: 29
+    itemStack:
+      material: PLAYER_HEAD
+      amount: 1
+      value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzkxMmQ0NWIxYzc4Y2MyMjQ1MjcyM2VlNjZiYTJkMTU3NzdjYzI4ODU2OGQ2YzFiNjJhNTQ1YjI5YzcxODcifX19
+    lore:
+    - '<gray>Download the plugin here:'
+    - '<gray>blueva.net/resources/resource/4'
+    actions:
+    - '[ALL] MESSAGE;<bold><gradient:#55FFFF:#5555FF>BlueMenu</gradient></bold> <gray><bold>» <white>Download the plugin here: blueva.net/resources/resource/4'
+    - '[ALL] CLOSE'
+  item3:
+    name: '<aqua>Wiki'
+    slot: 31
+    itemStack:
+      material: PLAYER_HEAD
+      amount: 1
+      value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDAxYWZlOTczYzU0ODJmZGM3MWU2YWExMDY5ODgzM2M3OWM0MzdmMjEzMDhlYTlhMWEwOTU3NDZlYzI3NGEwZiJ9fX0=
+    lore:
+    - '<gray>Visit the wiki here:'
+    - '<gray>blueva.net/wiki/bluemenu'
+    actions:
+    - '[ALL] MESSAGE;<bold><gradient:#55FFFF:#5555FF>BlueMenu</gradient></bold> <gray><bold>» <white>Visit the wiki here: blueva.net/wiki/bluemenu'
+    - '[ALL] CLOSE'
+  item4:
+    name: '<aqua>Support'
+    slot: 33
+    itemStack:
+      material: PLAYER_HEAD
+      amount: 1
+      value: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTVhZWNkODBiNTNmMWMxM2NkNjE1NDdiMDkyYmY2OTNmNTZmYTRhYTNjOTczODkzZjdiOGMwZGJkYzA2Nzk1MiJ9fX0=
+    lore:
+    - '<gray>Receive support on Discord:'
+    - '<gray>discord.gg/kgxBr8pwpU'
+    actions:
+    - '[ALL] MESSAGE;<bold><gradient:#55FFFF:#5555FF>BlueMenu</gradient></bold> <gray><bold>» <white>Receive support on Discord: discord.gg/kgxBr8pwpU'
+    - '[ALL] CLOSE'
+
+# ====================================
+# ANIMATIONS
+# ====================================
+# Animations allow you to create dynamic, changing items in your menu.
+# Each animation cycles through multiple frames at a specified interval.
+#
+# Structure:
+# - interval: Time in ticks between frame changes (20 ticks = 1 second)
+# - frames: List of item states to cycle through
+#
+# This example creates a border animation with colored glass panes
+animations:
+  # Border animation slot 0 (top-left corner)
+  animation1:
+    interval: 2  # Change frame every 2 ticks (0.1 seconds)
+    frames:
+      frame1:
+        name: "&f"
+        actions: []
+        slot: 0
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame2:
+        name: "&f"
+        actions: []
+        slot: 0
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame3:
+        name: "&f"
+        actions: []
+        slot: 0
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame4:
+        name: "&f"
+        actions: []
+        slot: 0
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame5:
+        name: "&f"
+        actions: []
+        slot: 0
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame6:
+        name: "&f"
+        actions: []
+        slot: 0
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+  animation2:
+    interval: 2
+    frames:
+      frame1:
+        name: "&f"
+        actions: []
+        slot: 1
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame2:
+        name: "&f"
+        actions: []
+        slot: 1
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame3:
+        name: "&f"
+        actions: []
+        slot: 1
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame4:
+        name: "&f"
+        actions: []
+        slot: 1
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame5:
+        name: "&f"
+        actions: []
+        slot: 1
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame6:
+        name: "&f"
+        actions: []
+        slot: 1
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+  animation3:
+    interval: 2
+    frames:
+      frame1:
+        name: "&f"
+        actions: []
+        slot: 2
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame2:
+        name: "&f"
+        actions: []
+        slot: 2
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame3:
+        name: "&f"
+        actions: []
+        slot: 2
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame4:
+        name: "&f"
+        actions: []
+        slot: 2
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame5:
+        name: "&f"
+        actions: []
+        slot: 2
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame6:
+        name: "&f"
+        actions: []
+        slot: 2
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+  animation4:
+    interval: 2
+    frames:
+      frame1:
+        name: "&f"
+        actions: []
+        slot: 3
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame2:
+        name: "&f"
+        actions: []
+        slot: 3
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame3:
+        name: "&f"
+        actions: []
+        slot: 3
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame4:
+        name: "&f"
+        actions: []
+        slot: 3
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame5:
+        name: "&f"
+        actions: []
+        slot: 3
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame6:
+        name: "&f"
+        actions: []
+        slot: 3
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+  animation5:
+    interval: 2
+    frames:
+      frame1:
+        name: "&f"
+        actions: []
+        slot: 4
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame2:
+        name: "&f"
+        actions: []
+        slot: 4
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame3:
+        name: "&f"
+        actions: []
+        slot: 4
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame4:
+        name: "&f"
+        actions: []
+        slot: 4
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame5:
+        name: "&f"
+        actions: []
+        slot: 4
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame6:
+        name: "&f"
+        actions: []
+        slot: 4
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+  animation6:
+    interval: 2
+    frames:
+      frame1:
+        name: "&f"
+        actions: []
+        slot: 5
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame2:
+        name: "&f"
+        actions: []
+        slot: 5
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame3:
+        name: "&f"
+        actions: []
+        slot: 5
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame4:
+        name: "&f"
+        actions: []
+        slot: 5
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame5:
+        name: "&f"
+        actions: []
+        slot: 5
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame6:
+        name: "&f"
+        actions: []
+        slot: 5
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+  animation7:
+    interval: 2
+    frames:
+      frame1:
+        name: "&f"
+        actions: []
+        slot: 6
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame2:
+        name: "&f"
+        actions: []
+        slot: 6
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame3:
+        name: "&f"
+        actions: []
+        slot: 6
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame4:
+        name: "&f"
+        actions: []
+        slot: 6
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame5:
+        name: "&f"
+        actions: []
+        slot: 6
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame6:
+        name: "&f"
+        actions: []
+        slot: 6
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+  animation8:
+    interval: 2
+    frames:
+      frame1:
+        name: "&f"
+        actions: []
+        slot: 7
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame2:
+        name: "&f"
+        actions: []
+        slot: 7
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame3:
+        name: "&f"
+        actions: []
+        slot: 7
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame4:
+        name: "&f"
+        actions: []
+        slot: 7
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame5:
+        name: "&f"
+        actions: []
+        slot: 7
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame6:
+        name: "&f"
+        actions: []
+        slot: 7
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+  animation9:
+    interval: 2
+    frames:
+      frame1:
+        name: "&f"
+        actions: []
+        slot: 8
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame2:
+        name: "&f"
+        actions: []
+        slot: 8
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame3:
+        name: "&f"
+        actions: []
+        slot: 8
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame4:
+        name: "&f"
+        actions: []
+        slot: 8
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame5:
+        name: "&f"
+        actions: []
+        slot: 8
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame6:
+        name: "&f"
+        actions: []
+        slot: 8
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+  animation10:
+    interval: 2
+    frames:
+      frame1:
+        name: "&f"
+        actions: []
+        slot: 53
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame2:
+        name: "&f"
+        actions: []
+        slot: 53
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame3:
+        name: "&f"
+        actions: []
+        slot: 53
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame4:
+        name: "&f"
+        actions: []
+        slot: 53
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame5:
+        name: "&f"
+        actions: []
+        slot: 53
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame6:
+        name: "&f"
+        actions: []
+        slot: 53
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+  animation11:
+    interval: 2
+    frames:
+      frame1:
+        name: "&f"
+        actions: []
+        slot: 52
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame2:
+        name: "&f"
+        actions: []
+        slot: 52
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame3:
+        name: "&f"
+        actions: []
+        slot: 52
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame4:
+        name: "&f"
+        actions: []
+        slot: 52
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame5:
+        name: "&f"
+        actions: []
+        slot: 52
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame6:
+        name: "&f"
+        actions: []
+        slot: 52
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+  animation12:
+    interval: 2
+    frames:
+      frame1:
+        name: "&f"
+        actions: []
+        slot: 51
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame2:
+        name: "&f"
+        actions: []
+        slot: 51
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame3:
+        name: "&f"
+        actions: []
+        slot: 51
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame4:
+        name: "&f"
+        actions: []
+        slot: 51
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame5:
+        name: "&f"
+        actions: []
+        slot: 51
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame6:
+        name: "&f"
+        actions: []
+        slot: 51
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+  animation13:
+    interval: 2
+    frames:
+      frame1:
+        name: "&f"
+        actions: []
+        slot: 50
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame2:
+        name: "&f"
+        actions: []
+        slot: 50
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame3:
+        name: "&f"
+        actions: []
+        slot: 50
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame4:
+        name: "&f"
+        actions: []
+        slot: 50
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame5:
+        name: "&f"
+        actions: []
+        slot: 50
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame6:
+        name: "&f"
+        actions: []
+        slot: 50
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+  animation14:
+    interval: 2
+    frames:
+      frame1:
+        name: "&f"
+        actions: []
+        slot: 49
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame2:
+        name: "&f"
+        actions: []
+        slot: 49
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame3:
+        name: "&f"
+        actions: []
+        slot: 49
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame4:
+        name: "&f"
+        actions: []
+        slot: 49
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame5:
+        name: "&f"
+        actions: []
+        slot: 49
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame6:
+        name: "&f"
+        actions: []
+        slot: 49
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+  animation15:
+    interval: 2
+    frames:
+      frame1:
+        name: "&f"
+        actions: []
+        slot: 48
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame2:
+        name: "&f"
+        actions: []
+        slot: 48
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame3:
+        name: "&f"
+        actions: []
+        slot: 48
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame4:
+        name: "&f"
+        actions: []
+        slot: 48
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame5:
+        name: "&f"
+        actions: []
+        slot: 48
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame6:
+        name: "&f"
+        actions: []
+        slot: 48
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+  animation16:
+    interval: 2
+    frames:
+      frame1:
+        name: "&f"
+        actions: []
+        slot: 47
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame2:
+        name: "&f"
+        actions: []
+        slot: 47
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame3:
+        name: "&f"
+        actions: []
+        slot: 47
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame4:
+        name: "&f"
+        actions: []
+        slot: 47
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame5:
+        name: "&f"
+        actions: []
+        slot: 47
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame6:
+        name: "&f"
+        actions: []
+        slot: 47
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+  animation17:
+    interval: 2
+    frames:
+      frame1:
+        name: "&f"
+        actions: []
+        slot: 46
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame2:
+        name: "&f"
+        actions: []
+        slot: 46
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame3:
+        name: "&f"
+        actions: []
+        slot: 46
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame4:
+        name: "&f"
+        actions: []
+        slot: 46
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame5:
+        name: "&f"
+        actions: []
+        slot: 46
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame6:
+        name: "&f"
+        actions: []
+        slot: 46
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+  animation18:
+    interval: 2
+    frames:
+      frame1:
+        name: "&f"
+        actions: []
+        slot: 45
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame2:
+        name: "&f"
+        actions: []
+        slot: 45
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1
+      frame3:
+        name: "&f"
+        actions: []
+        slot: 45
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame4:
+        name: "&f"
+        actions: []
+        slot: 45
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame5:
+        name: "&f"
+        actions: []
+        slot: 45
+        itemStack:
+          material: BLUE_STAINED_GLASS_PANE
+          amount: 1
+      frame6:
+        name: "&f"
+        actions: []
+        slot: 45
+        itemStack:
+          material: BLACK_STAINED_GLASS_PANE
+          amount: 1

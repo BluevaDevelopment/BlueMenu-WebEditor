@@ -1,0 +1,410 @@
+#  ____  _            __  __
+# | __ )| |_   _  ___|  \/  | ___ _ __  _   _
+# |  _ \| | | | |/ _ | |\/| |/ _ | '_ \| | | |
+# | |_) | | |_| |  __| |  | |  __| | | | |_| |
+# |____/|_|\__,_|\___|_|  |_|\___|_| |_|\__,_|
+
+file_version: 1
+
+# ====================================
+# SLOTS HELPER MENU (Java Edition)
+# ====================================
+# This is a utility menu that helps you visualize slot positions in a CHEST menu.
+# Each item displays its slot number, making it easy to identify which slot
+# corresponds to which position when designing your menus.
+#
+# Slot numbering in a 54-slot chest menu:
+# Row 1:  0  1  2  3  4  5  6  7  8
+# Row 2:  9 10 11 12 13 14 15 16 17
+# Row 3: 18 19 20 21 22 23 24 25 26
+# Row 4: 27 28 29 30 31 32 33 34 35
+# Row 5: 36 37 38 39 40 41 42 43 44
+# Row 6: 45 46 47 48 49 50 51 52 53
+#
+# Use this menu to quickly find slot numbers for your menu designs.
+
+menuName: '     <bold><gradient:#55FFFF:#5555FF>BlueMenu</gradient></bold> <gray>- <reset>Java Slots'
+menuSize: 54           # Full chest (6 rows x 9 columns = 54 slots)
+type: CHEST
+openCommand: /slots    # Open this helper menu with /slots
+
+# All 54 slots with their corresponding numbers
+items:
+  item0:
+    name: "Slot: <red>0"
+    slot: 0
+    itemStack:
+      material: RED_STAINED_GLASS_PANE
+      amount: 1
+    lore: []
+  item1:
+    name: "Slot: <aqua>1"
+    slot: 1
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 1
+    lore: []
+  item2:
+    name: "Slot: <aqua>2"
+    slot: 2
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 2
+    lore: []
+  item3:
+    name: "Slot: <aqua>3"
+    slot: 3
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 3
+    lore: []
+  item4:
+    name: "Slot: <aqua>4"
+    slot: 4
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 4
+    lore: []
+  item5:
+    name: "Slot: <aqua>5"
+    slot: 5
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 5
+    lore: []
+  item6:
+    name: "Slot: <aqua>6"
+    slot: 6
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 6
+    lore: []
+  item7:
+    name: "Slot: <aqua>7"
+    slot: 7
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 7
+    lore: []
+  item8:
+    name: "Slot: <aqua>8"
+    slot: 8
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 8
+    lore: []
+  item9:
+    name: "Slot: <aqua>9"
+    slot: 9
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 9
+    lore: []
+  item10:
+    name: "Slot: <aqua>10"
+    slot: 10
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 10
+    lore: []
+  item11:
+    name: "Slot: <aqua>11"
+    slot: 11
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 11
+    lore: []
+  item12:
+    name: "Slot: <aqua>12"
+    slot: 12
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 12
+    lore: []
+  item13:
+    name: "Slot: <aqua>13"
+    slot: 13
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 13
+    lore: []
+  item14:
+    name: "Slot: <aqua>14"
+    slot: 14
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 14
+    lore: []
+  item15:
+    name: "Slot: <aqua>15"
+    slot: 15
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 15
+    lore: []
+  item16:
+    name: "Slot: <aqua>16"
+    slot: 16
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 16
+    lore: []
+  item17:
+    name: "Slot: <aqua>17"
+    slot: 17
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 17
+    lore: []
+  item18:
+    name: "Slot: <aqua>18"
+    slot: 18
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 18
+    lore: []
+  item19:
+    name: "Slot: <aqua>19"
+    slot: 19
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 19
+    lore: []
+  item20:
+    name: "Slot: <aqua>20"
+    slot: 20
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 20
+    lore: []
+  item21:
+    name: "Slot: <aqua>21"
+    slot: 21
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 21
+    lore: []
+  item22:
+    name: "Slot: <aqua>22"
+    slot: 22
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 22
+    lore: []
+  item23:
+    name: "Slot: <aqua>23"
+    slot: 23
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 23
+    lore: []
+  item24:
+    name: "Slot: <aqua>24"
+    slot: 24
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 24
+    lore: []
+  item25:
+    name: "Slot: <aqua>25"
+    slot: 25
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 25
+    lore: []
+  item26:
+    name: "Slot: <aqua>26"
+    slot: 26
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 26
+    lore: []
+  item27:
+    name: "Slot: <aqua>27"
+    slot: 27
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 27
+    lore: []
+  item28:
+    name: "Slot: <aqua>28"
+    slot: 28
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 28
+    lore: []
+  item29:
+    name: "Slot: <aqua>29"
+    slot: 29
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 29
+    lore: []
+  item30:
+    name: "Slot: <aqua>30"
+    slot: 30
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 30
+    lore: []
+  item31:
+    name: "Slot: <aqua>31"
+    slot: 31
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 31
+    lore: []
+  item32:
+    name: "Slot: <aqua>32"
+    slot: 32
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 32
+    lore: []
+  item33:
+    name: "Slot: <aqua>33"
+    slot: 33
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 33
+    lore: []
+  item34:
+    name: "Slot: <aqua>34"
+    slot: 34
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 34
+    lore: []
+  item35:
+    name: "Slot: <aqua>35"
+    slot: 35
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 35
+    lore: []
+  item36:
+    name: "Slot: <aqua>36"
+    slot: 36
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 36
+    lore: []
+  item37:
+    name: "Slot: <aqua>37"
+    slot: 37
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 37
+    lore: []
+  item38:
+    name: "Slot: <aqua>38"
+    slot: 38
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 38
+    lore: []
+  item39:
+    name: "Slot: <aqua>39"
+    slot: 39
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 39
+    lore: []
+  item40:
+    name: "Slot: <aqua>40"
+    slot: 40
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 40
+    lore: []
+  item41:
+    name: "Slot: <aqua>41"
+    slot: 41
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 41
+    lore: []
+  item42:
+    name: "Slot: <aqua>42"
+    slot: 42
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 42
+    lore: []
+  item43:
+    name: "Slot: <aqua>43"
+    slot: 43
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 43
+    lore: []
+  item44:
+    name: "Slot: <aqua>44"
+    slot: 44
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 44
+    lore: []
+  item45:
+    name: "Slot: <aqua>45"
+    slot: 45
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 45
+    lore: []
+  item46:
+    name: "Slot: <aqua>46"
+    slot: 46
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 46
+    lore: []
+  item47:
+    name: "Slot: <aqua>47"
+    slot: 47
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 47
+    lore: []
+  item48:
+    name: "Slot: <aqua>48"
+    slot: 48
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 48
+    lore: []
+  item49:
+    name: "Slot: <aqua>49"
+    slot: 49
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 49
+    lore: []
+  item50:
+    name: "Slot: <aqua>50"
+    slot: 50
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 50
+    lore: []
+  item51:
+    name: "Slot: <aqua>51"
+    slot: 51
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 51
+    lore: []
+  item52:
+    name: "Slot: <aqua>52"
+    slot: 52
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 52
+    lore: []
+  item53:
+    name: "Slot: <aqua>53"
+    slot: 53
+    itemStack:
+      material: BLACK_STAINED_GLASS_PANE
+      amount: 53
+    lore: []
